@@ -52,4 +52,13 @@ class FollowingTest < ActionDispatch::IntegrationTest
       delete relationship_path(relationship), xhr: true
     end
   end
+
+  test 'feed on Home page' do
+    get root_path
+    @user.feed.paginate(page: 1).each do |micropost|
+      # HTMLエスケープしないとシングルクォーテーションなどの記号を含む投稿が一致しなくなる
+      # assert_match micropost.content.to_s, response.body
+      assert_match CGI.escapeHTML(micropost.content), response.body
+    end
+  end
 end

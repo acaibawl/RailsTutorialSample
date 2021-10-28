@@ -18,5 +18,11 @@ class UsersProfileTest < ActionDispatch::IntegrationTest
     @user.microposts.paginate(page: 1).each do |micropost|
       assert_match micropost.content, response.body
     end
+    assert_select 'div.stats>a[href=?]>strong', following_user_path(@user), text: @user.following.count.to_s
+    assert_select 'div.stats>a[href=?]>strong', followers_user_path(@user), text: @user.followers.count.to_s
+    log_in_as(@user)
+    get root_path
+    assert_select 'div.stats>a[href=?]>strong', following_user_path(@user), text: @user.following.count.to_s
+    assert_select 'div.stats>a[href=?]>strong', followers_user_path(@user), text: @user.followers.count.to_s
   end
 end
